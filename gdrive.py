@@ -24,11 +24,12 @@ def get_drive():
 
 
 def get_file(file_id, mimetype=None):
-    drive = get_drive()
-    file = drive.CreateFile({'id': file_id})
-    file.FetchMetadata()
-    file.GetContentFile(file['title'], mimetype)
-    return file['title']
+    if file_id:
+        drive = get_drive()
+        file = drive.CreateFile({'id': file_id})
+        file.FetchMetadata()
+        file.GetContentFile(file['title'], mimetype)
+        return file['title']
 
 
 if __name__ == '__main__':

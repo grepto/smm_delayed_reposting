@@ -25,7 +25,10 @@ def get_day_number_by_day_name(day_name):
 def get_url(string):
     pattern = re.compile('(http|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?')
     result = pattern.search(string)
-    return result.group(0)
+    try:
+        return result.group(0)
+    except AttributeError:
+        return None
 
 
 def get_file_id(url):
@@ -56,9 +59,10 @@ def get_post_plan():
 
 def get_post_text(file_id):
     post_text_file = get_file(file_id, 'text/plain')
-    with open(post_text_file, 'r') as file:
-        post_text = file.read()
-    return post_text
+    if post_text_file:
+        with open(post_text_file, 'r') as file:
+            post_text = file.read()
+        return post_text
 
 
 def get_post_image(file_id):
