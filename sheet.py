@@ -28,10 +28,10 @@ def get_sheet_credentials():
 def get_sheet(spreadsheet_id, range_name):
     credentials = get_sheet_credentials()
     service = build('sheets', 'v4', credentials=credentials)
-    sheet = service.spreadsheets()
-    result = sheet.values().get(spreadsheetId=spreadsheet_id,
-                                range=range_name,
-                                valueRenderOption='FORMULA').execute()
+    sheets = service.spreadsheets()
+    result = sheets.values().get(spreadsheetId=spreadsheet_id,
+                                 range=range_name,
+                                 valueRenderOption='FORMULA').execute()
     values = result.get('values', [])
     return values
 
@@ -49,6 +49,7 @@ def update_sheet_cell(spreadsheet_id, cell_range, value):
                                    valueInputOption='RAW',
                                    body=body).execute()
     values = result.get('values', [])
+    return values
 
 
 def main():

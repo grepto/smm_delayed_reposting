@@ -23,6 +23,7 @@ def get_day_number_by_day_name(day_name):
 
 
 def get_url(string):
+    # Паттерн поиска взял тут https://stackoverflow.com/questions/6038061/regular-expression-to-find-urls-within-a-string
     pattern = re.compile('(http|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?')
     result = pattern.search(string)
     try:
@@ -65,17 +66,13 @@ def get_post_text(file_id):
         return post_text
 
 
-def get_post_image(file_id):
-    return get_file(file_id)
-
-
-def get_post_to_publish(post_plan):
+def get_posts_to_publish(post_plan):
     now = datetime.datetime.now()
-    return list(filter(lambda x: x['publish_day'] == now.weekday()
-                                 and x['publish_time'] == now.hour
-                                 and not x['is_published'],
-                       post_plan)
-                )
+    posts_to_publish = [post for post in post_plan if post['publish_day'] == now.weekday()
+                        and post['publish_time'] == now.hour
+                        and not post['is_published']
+                        ]
+    return posts_to_publish
 
 
 def set_post_is_published(post):
@@ -85,7 +82,7 @@ def set_post_is_published(post):
 
 def publish_post(post):
     post_text = get_post_text(post['post_file_id'])
-    post_image_file = get_post_image(post['post_image_id'])
+    post_image_file = get_file(post['post_image_id'])
     if post['is_vkontakte']:
         post_vkontakte(post_text, post_image_file)
     if post['is_facebook']:
@@ -98,8 +95,8 @@ def publish_post(post):
 def smm_delayed_reposting():
     while True:
         post_plan = get_post_plan()
-        post_to_publish = get_post_to_publish(post_plan)
-        for post in post_to_publish:
+        posts_to_publish = get_posts_to_publish(post_plan)
+        for post in posts_to_publish:
             publish_post(post)
         time.sleep(300)
 
